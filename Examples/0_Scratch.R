@@ -1,5 +1,8 @@
 # this is where we add our R code
 
+# clear the console
+cat('\014')
+
 # some data types
 age <- 25
 year <- 2023
@@ -20,6 +23,18 @@ strAge
 
 print(paste("My age is", age))
 
+# lets open the CSV file
+data_survey <- read.csv("data/game_survey_250.csv")
+head(data_survey, 10)
+tail(data_survey, 4)
+
+summary(data_survey)
+
+hist(data_survey$avg_monthly_hrs_gaming,
+     breaks = 15,
+     xlab = "Hrs per month",
+     ylab = "Number of players",
+     main = "Frequency of players hrs...")
 
 
 

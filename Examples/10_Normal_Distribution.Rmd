@@ -1,0 +1,148 @@
+---
+title: "Normal Distribution"
+subtitle: "Normality testing of student shoe size, height and age"
+author: "Niall McGuinness, Jane Doe"
+date: "`r format(Sys.time(), '%a, %d %B %y at %X')`"
+fontsize: "10pt"
+output: 
+  html_document:
+    toc: true
+    toc_title: "Table Of Contents"
+    toc_float: true
+    toc_depth: 2
+    fig_caption: false
+    lof: true
+    number_sections: true
+    code_folding: hide
+    theme: paper
+---
+
+# Useful Links
+* [Testing for normality in R](https://www.programmingr.com/statistics/normality-test/) 
+* [How to Perform a Shapiro-Wilk Test in R](https://www.statology.org/shapiro-wilk-test-r/)
+* [R Markdown Reference Guide](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+* [Setting up your R markdown YAML Header](https://zsmith27.github.io/rmarkdown_crash-course/lesson-4-yaml-headers.html)
+* [Setting document date automatically](https://bookdown.org/yihui/rmarkdown-cookbook/update-date.html)
+* [R Markdown Theme Gallery](https://www.datadreaming.org/post/r-markdown-theme-gallery/)
+* [An overview of color names in R](https://r-graph-gall
+   ery.com/42-colors-names.html)
+* [Top 7 Packages for Making Beautiful Tables in R](https://towardsdatascience.com/top-7-packages-for-making-beautiful-tables-in-r-7683d054e541)
+* [Beautiful tables in R with gtExtras](https://themockup.blog/posts/2022-06-13-gtextras-cran/)
+
+```{r setup and library load, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+cat('\014')
+```
+
+
+# Load & Inspect Data 
+
+## Load data
+
+```{r Load Data, echo=TRUE}
+file_name = "shoe_sizes_1.csv"
+student_data <- read.csv(file_name)
+```
+
+## Inspect Data Structure
+
+```{r Inspect Head, Tail & Structure, echo=TRUE}
+# show structure
+str(student_data)
+
+# show first N
+head(student_data, 10)
+# show last N
+tail(student_data, 5)
+
+# show a "prettier" paged table
+rmarkdown::paged_table(student_data)
+
+# show a "prettier" paged table but ONLY first 8 rows
+head_student_data <- head(student_data, 8)
+rmarkdown::paged_table(head_student_data)
+
+# show a "prettier" paged table using kable() with caption and decimal digit max length and alignment = centre
+knitr::kable(student_data,
+  align = c('c'), # a vector with 'c', 'l', or 'r' values
+  digits = 2,
+  caption = "A caption for your table here")
+```
+
+## Mean, Median & Summary
+
+```{r Mean & Median, echo=TRUE}
+shoe_size_mean <- mean(student_data$show_size_eu)
+shoe_size_std <- sd(student_data$show_size_eu)
+
+age <- 40
+```
+
+The value of age is `r age`
+
+We can access variables from inside code chunks by wrapping the variable in a *mini-chunk* of R as shown on the next line.
+
+Median shoe size statistics were generated (M =`r round(shoe_size_mean, 2)`, SD = `r round(shoe_size_std, 2)`). 
+
+It can be useful to create a summary of the data for quick analysis. A summary of the data is shown below:
+
+```{r Summary, echo=TRUE}
+summary(student_data)
+#boxplot(student_data$height_cm~student_data$gender)
+```
+
+# Three of Four Tests for Normality 
+
+## Method 1: Using Histogram / Density Plot
+
+### Testing Height Distribution
+
+```{r Histogram & Density Plot - Height, echo=TRUE}
+hist(student_data$height_cm, 
+     main = "Student Height",
+     xlab = "Height(cm)",
+     ylab = "Frequency",
+     breaks = 8)
+```
+
+### Testing Shoe Size Distribution
+
+```{r Histogram & Density Plot - Show Size, echo=TRUE}
+hist(student_data$show_size_eu, 
+     main = "Student Shoe Size",
+     xlab = "Size(EU)",
+     ylab = "Frequency",
+     breaks = 6,
+     freq = FALSE)
+```
+
+## Method 2: Using QQ Plot (Version 1 - using in-built qqnorm())
+
+```{r QQ Plot - Shoe Size, echo=TRUE}
+qqnorm(student_data$show_size_eu,
+       pch = 2, frame = FALSE)
+
+qqline(student_data$show_size_eu, 
+       col = "darkorchid", lwd = 1)
+
+```
+
+## Method 3: Statistical Test: Shapiro-Wilk
+
+```{r Shapiro-Wilk, echo=TRUE}
+
+#perform shapiro-wilk test
+result_sw <- shapiro.test(student_data$show_size_eu)
+result_sw
+```
+
+A `r result_sw$method` was conducted on the shoe size data. From the output obtained we can not assume normality as the p-value (p=`r round(result_sw$p.value, 4)`) is less than 0.05.
+
+
+
+
+
+
+
+
+
